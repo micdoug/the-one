@@ -7,7 +7,7 @@ Scenario.name = default_scenario
 Scenario.simulateConnections = true
 Scenario.updateInterval = 60
 # 43200s == 12h
-Scenario.endTime = 1296000
+Scenario.endTime = 43200
 
 ## Interface-specific settings:
 # type : which interface class the interface belongs to
@@ -25,7 +25,7 @@ btInterface.transmitRange = 10
 # High speed, long range, interface for group 4
 highspeedInterface.type = SimpleBroadcastInterface
 highspeedInterface.transmitSpeed = 10M
-highspeedInterface.transmitRange = 10
+highspeedInterface.transmitRange = 1000
 
 Scenario.nrofHostGroups = 1
 
@@ -47,10 +47,18 @@ Group1.groupID = p
 
 ## Message creation parameters
 # How many event generators
-Events.nrof = 0
-Events1.class = ExternalEventsQueue
-Events1.filePath = /home/micdoug/Documents/projects/dartmouth-trace/dartmouth.txt
-
+Events.nrof = 1
+# Class of the first event generator
+Events1.class = MessagePerNodeEventGenerator
+# (following settings are specific for the MessageEventGenerator class)
+# Creation interval in seconds (one new message every 25 to 35 seconds)
+Events1.interval = 25,35
+# Message sizes (500kB - 1MB)
+Events1.size = 500k,1M
+# range of message source/destination addresses
+Events1.hosts = 0,126
+# Message ID prefix
+Events1.prefix = M
 
 
 ## Movement model settings
@@ -72,8 +80,8 @@ Report.warmup = 0
 # default directory of reports (can be overridden per Report with output setting)
 Report.reportDir = reports/
 # Report classes to load
-Report.report1 = GroupDetectionReport
-Report.report2 = ConnectivityONEReport
+Report.report1 = MessageStatsReport
+Report.report2 = ContactTimesReport
 
 ## Default settings for some routers settings
 ProphetRouter.secondsInTimeUnit = 30
