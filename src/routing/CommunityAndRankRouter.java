@@ -31,15 +31,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import routing.centrality.ReportCentrality;
 import routing.community.CommunityDetection;
 import routing.community.Duration;
+import routing.community.ReportCommunity;
 import util.Tuple;
 
 /**
  * The base implementation for protocols based on communities and global/local
  * rank.
  */
-public abstract class CommunityAndRankRouter extends ActiveRouter {
+public abstract class CommunityAndRankRouter extends ActiveRouter implements ReportCentrality, ReportCommunity {
 
     /**
      * Community algorithm -setting id ({@value}).

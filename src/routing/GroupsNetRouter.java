@@ -30,6 +30,8 @@ import java.util.*;
 /**
  * A simple implementation of Groups NET forwarding algorithm.
  * This implementation use pre calculated routes loaded from external files.
+ * When the defined route for a given message is empty, this router will fallback
+ * to direct delivery strategy.
  */
 public class GroupsNetRouter extends ActiveRouter {
 
@@ -43,8 +45,7 @@ public class GroupsNetRouter extends ActiveRouter {
     /**
      * Constructor.
      *
-     * @param set The settings object.
-     * @param namespace The base namespace for router configurations.
+     * @param settings The settings object.
      */
     public GroupsNetRouter(Settings settings) {
         super(settings);
@@ -121,8 +122,7 @@ public class GroupsNetRouter extends ActiveRouter {
     }
 
     /**
-     * Process each message using community and rank information to decide
-     * if the message should be forwarded or not.
+     * Process each message using pre calculated routes.
      * @return A set of messages and connections to forward messages.
      */
     protected Tuple<Message, Connection> tryOtherMessages() {

@@ -22,6 +22,7 @@ import core.MessageListener;
 import core.Settings;
 import java.util.List;
 import routing.centrality.Centrality;
+import routing.community.ReportCommunity;
 
 /**
  * BubbleRap routing implementation.
@@ -96,7 +97,16 @@ public class BubbleRapRouter extends CommunityAndRankRouter {
         this.centrality.setHost(host);
         this.comdetect.setHost(host);
     }
-    
+
+    @Override
+    public double getLocalCentrality() {
+        return getLocalRank();
+    }
+
+    @Override
+    public double getGlobalCentrality() {
+        return getGlobalRank();
+    }
 }
 
 

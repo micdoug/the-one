@@ -70,7 +70,16 @@ public class CommunityAndRankRouterTest extends AbstractRouterTest {
         public MessageRouter replicate() {
             return new RouterTest(this);
         }
-        
+
+        @Override
+        public double getLocalCentrality() {
+            return 0;
+        }
+
+        @Override
+        public double getGlobalCentrality() {
+            return 0;
+        }
     }
     
     private RouterTest r0;
