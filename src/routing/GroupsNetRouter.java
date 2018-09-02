@@ -42,6 +42,8 @@ public class GroupsNetRouter extends ActiveRouter {
 
     private static final Map<Integer, Set<Integer>> routes = new HashMap<>();
 
+    private Map<Integer, Integer> neighborsState;
+
     /**
      * Constructor.
      *
@@ -50,6 +52,7 @@ public class GroupsNetRouter extends ActiveRouter {
     public GroupsNetRouter(Settings settings) {
         super(settings);
 
+        this.neighborsState = new HashMap<>();
         settings = new Settings("GroupsNetRouter");
         String file_path = settings.getSetting(ROUTES_FILE_CONFIG);
         System.out.println(String.format("Trying to open the file %s", file_path));
@@ -97,7 +100,7 @@ public class GroupsNetRouter extends ActiveRouter {
     public GroupsNetRouter(GroupsNetRouter prot) {
         super(prot);
 
-        // Nothing yet
+        this.neighborsState = new HashMap<>();
     }
 
     @Override
@@ -113,7 +116,9 @@ public class GroupsNetRouter extends ActiveRouter {
             return;
         }
 
-        tryOtherMessages();
+        if (!getMessageCollection().isEmpty()) {
+            tryOtherMessages();
+        }
     }
 
     @Override
@@ -136,6 +141,17 @@ public class GroupsNetRouter extends ActiveRouter {
         for (Connection con : getConnections()) {
             // Get the reference to the router of the other node
             DTNHost otherNode = con.getOtherNode(getHost());
+
+            if (!this.neighborsState.containsKey(otherNode.getAddress())) {
+                this.neighborsState.put(otherNode.getAddress(), otherNode.getNodeState() + getHost().getNodeState());
+            }
+            else {
+                int state = this.neighborsState.get(otherNode.getAddress());
+                if (state == getHost().getNodeState() + otherNode.getNodeState()) {
+                    continue;
+                }
+            }
+
             final GroupsNetRouter otherRouter = (GroupsNetRouter) otherNode.getRouter();
 
             if (otherRouter.isTransferring()) {

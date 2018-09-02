@@ -36,6 +36,8 @@ public class DTNHost implements Comparable<DTNHost> {
 	private List<NetworkInterface> net;
 	private ModuleCommunicationBus comBus;
 
+	private int nodeState = 0;
+
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
@@ -457,6 +459,8 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		if (retVal == MessageRouter.RCV_OK) {
 			m.addNodeOnPath(this);	// add this node on the messages path
+            // Every time a node receive a message its state has changed
+            this.nodeState += 1;
 		}
 
 		return retVal;
@@ -549,4 +553,7 @@ public class DTNHost implements Comparable<DTNHost> {
 		}
 	}
 
+    public int getNodeState() {
+        return nodeState;
+    }
 }

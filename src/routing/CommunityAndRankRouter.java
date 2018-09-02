@@ -74,6 +74,11 @@ public abstract class CommunityAndRankRouter extends ActiveRouter implements Rep
     private Map<DTNHost, List<Duration>> conHistory;
 
     /**
+     * Stores the state of nodes when they have exchanged messages the last time.
+     */
+    private Map<Integer, Integer> neighborsState;
+
+    /**
      * Constructor.
      *
      * @param set The settings object.
@@ -89,6 +94,7 @@ public abstract class CommunityAndRankRouter extends ActiveRouter implements Rep
         this.conStates = new HashSet<Connection>();
         this.conHistory = new HashMap<DTNHost, List<Duration>>();
         this.startedConnections = new HashMap<DTNHost, Double>();
+        this.neighborsState = new HashMap<>();
     }
 
     /**
@@ -102,6 +108,7 @@ public abstract class CommunityAndRankRouter extends ActiveRouter implements Rep
         this.conStates = new HashSet<Connection>();
         this.conHistory = new HashMap<DTNHost, List<Duration>>();
         this.startedConnections = new HashMap<DTNHost, Double>();
+        this.neighborsState = new HashMap<>();
     }
 
     @Override
@@ -191,7 +198,9 @@ public abstract class CommunityAndRankRouter extends ActiveRouter implements Rep
             return;
         }
 
-        tryOtherMessages();
+        if (!getMessageCollection().isEmpty()) {
+            tryOtherMessages();
+        }
     }
 
     /**
@@ -210,6 +219,15 @@ public abstract class CommunityAndRankRouter extends ActiveRouter implements Rep
         for (Connection con : getConnections()) {
             // Get the reference to the router of the other node
             DTNHost otherNode = con.getOtherNode(getHost());
+            if (!this.neighborsState.containsKey(otherNode.getAddress())) {
+                this.neighborsState.put(otherNode.getAddress(), otherNode.getNodeState() + getHost().getNodeState());
+            }
+            else {
+                int state = this.neighborsState.get(otherNode.getAddress());
+                if (state == otherNode.getNodeState() + getHost().getNodeState()) {
+                    continue;
+                }
+            }
             final CommunityAndRankRouter otherRouter = (CommunityAndRankRouter) otherNode.getRouter();
             final double myLocalRank = getLocalRank();
             final double otherLocalRank = otherRouter.getLocalRank();
